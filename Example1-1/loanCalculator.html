@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JavaScript Loan Calculator</title>
+<style>
+/* This is a CSS sytle sheet: it adds style to the program output */
+.output {font-weight: bold;} /* Caculuated values in bold */
+#payment {text-decoration: underline;}
+#graph {border: solid black 1px;}
+th, td {vertical-align: top;}
+</style>
+</head>
+<body>
+<!--
+    This is HTML table with <input> elements that allow the user to enter data
+     and <span> elements in which the program can display its results.
+     These elements have ids like "interest" and "years". These  ids are used in the JavaScript code that follows the table.
+     Note that some of the input elements define "onchange" or "onclick" evetn handlers. These specify strings
+     of JavaScript code to be executed when the user enters data or clicks.
+-->
+<table>
+    <tr><th>Enter Loan Data:</th>
+        <td></td>
+        <th>Loan Balance, Cumulative Equity, and Interest Payments</th>
+    </tr>
+
+    <tr><td>Amount of the loan ($):</td>
+        <td><input id="amount" onchange="calculate();"></td>
+        <td rowspan = 8>
+            <canvas id="graph" width="400" height="250"></canvas></td>
+    </tr>
+
+    <tr><td>Annual interest (%):</td>
+        <td><input id="apr" onchange="calculate();"></td>
+    </tr>
+
+    <tr><td>Repayment period (years):</td>
+        <td><input id="years" onchange="calculate();"></td>
+    </tr>
+
+    <tr><td>Zicode (to find lenders):</td>
+        <td><input id="zipcode" onchange="calculate();"></td>
+    </tr>
+
+    <tr><th>Approximate payments:</th>
+        <td><button onclick="calculate();">Calculate</button></td>
+    </tr>
+
+    <tr><td>Monthly payment:</td>
+        <td>$<span class="output" id="payment"></span></td>
+    </tr>
+
+    <tr><td>Total payment:</td>
+        <td>$<span class="output" id="total"></span></td>
+    </tr>
+
+    <tr><td>Total interest:</td>
+        <td>$<span class="output" id="totalinterest"></span></td>
+    </tr>
+
+    <tr><th>Sponsors:</th><td colspan=2>
+        Apply for your loan with one of these fine lenders:
+        <div id="lenders"></div></td>
+    </tr>
+</table>
+<!-- The rest of this example is JavaScript code in the <script> tag below -->
+<script>
+"user strict"; // Use ECMAScript 5 strict mode  in browsers that support it.
+
+/*
+ * This script defines calculate() function called by event handlers 
+ * in HTML above. The function reads the values from <input> elements, calculates
+ * loan payment information, display the results in <span> elements. It also
+ * save the user's data, displays links to lenders, and draws a chart.
+ */
+function calculate() {
+    // Look uo the input and output elements in the document
+    var amount = document.getElementById("amount");
+    var apr = document.getElementById("apr");
+    var years = document.getElementById("years");
+    var zipcode = document.getElementById("zipcode");
+    var payment = document.getElementById("payment");
+    var total = document.getElementById("total");
+    var totalinterest = document.getElementById("totalinterest");
+
+    // Get the user's input from the <input> elements. Assume it is all valid.
+    // Convert the interest from a percentage to a decimal, and convert from
+    // an annual rate to a monthly rate. Convert payment period in years
+    // to the number of monthly payments.
+    var principal = parseFloat(amount.value);
+    var interest = parseFloat(apr.value) / 100 / 12;
+    var payments = parseFloat(years.value) * 12;
+
+    // Now compute the monthly payment figure.
+    var x = Math.pow(1 + interest, payments);
+    var monthly = (principal * x * interest) / (x - 1);
+
+    // If the result is a finite number, the user's input was good and 
+    // whe have meaningful results to display.
+    if(isFinite(monthly)) {
+        // Fill in the output fields, rounding to 2 decimal places.
+        payment.innerHTML = monthly.toFixed(2);
+        total.innerHTML = (monthly * payments).toFixed(2);
+        totalinterest.innerHTML = ((monthly * payments) - principal).toFixed(2);
+
+        // Save the user's input so we can restore it the next time they visit
+        save(amount.value, apr.value, years.value, zipcode.value);
+
+        // Advertise: find and display local lenders, but ignore network errors
+        try { //Catch any errors that occur within these curly braces
+            getLenders(amount.value, apr.value, years.value, zipcode.value);    
+        }
+        catch(e) {/* And ignore those errors */}
+
+        // Finally cahrt loan balance, and interest and equity payments
+        chart(principal, interest, monthly, payments);
+    }
+}
+</script>
+</body>
+</html>
