@@ -1,0 +1,69 @@
+<!-- Enter your HTML code here -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Buttons Grid</title>
+        <!--script type="text/javascript" src="js/buttonsGrid.js"></script-->
+        <link rel="stylesheet" href="css/buttonsGrid.css" type="text/css">
+    </head>
+    <body>
+    <div id="btns" class="buttonContainer">
+        <button id="btn1" class="buttonClass">1</button>
+        <button id="btn2" class="buttonClass">2</button>
+        <button id="btn3" class="buttonClass">3</button>
+        <button id="btn4" class="buttonClass">4</button>
+        <button id="btn5" class="buttonClass1">5</button>
+        <button id="btn6" class="buttonClass">6</button>
+        <button id="btn7" class="buttonClass">7</button>
+        <button id="btn8" class="buttonClass">8</button>
+        <button id="btn9" class="buttonClass">9</button>
+    </div> 
+    <!--<script src="js/buttonsGrid.js" type="text/javascrip"></script>-->
+    <script>
+        var btns = [];
+        var k = 0;
+        for (var i = 1; i < 10; i++) {
+            if (i != 5) {
+                let label = "btn" + i;
+                switch(k) {
+                    case 0:
+                    case 1:
+                    case 2:
+                        btns[k] = document.getElementById(label);
+                        break;
+                    case 3:
+                        btns[7] = document.getElementById(label);
+                        break;
+                    case 4:
+                        btns[3] = document.getElementById(label);
+                        break;
+                    case 5:
+                        btns[6] = document.getElementById(label);
+                        break;
+                    case 6:
+                        btns[5] = document.getElementById(label);
+                        break;
+                    case 7:
+                        btns[4] = document.getElementById(label);
+                        break;
+                    default:
+                        break;
+                }
+                k++;
+            } 
+        }
+        var btn5 = document.getElementById("btn5");
+        btn5.onclick = function() {
+            let btns2 = []; 
+            for (var i = 0; i < btns.length; i++) {
+                let j = (i+1)%8
+                btns2[j] = btns[i].innerHTML;                
+            }
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].innerHTML = btns2[i];
+            };
+        }
+    </script>
+    </body>
+</html>
